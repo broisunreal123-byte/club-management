@@ -1,0 +1,148 @@
+package business;
+
+import models.Registration;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class RegistrationManagement {
+    // Dùng ArrayList bình thường như sinh viên hay học trên lớp
+    ArrayList<Registration> list = new ArrayList<>();
+    Scanner sc = new Scanner(System.in);
+
+    public RegistrationManagement() {
+        list.add(new Registration("K001", "SE01", "Nguyen Van An", "C001", "10/09/2024", "Active"));
+        list.add(new Registration("K002", "SE02", "Tran Thi Binh", "C001", "11/09/2024", "Active"));
+    }
+
+    public void AddRegister() {
+        System.out.println("\n--- ADD NEW REGISTRATION ---");
+        System.out.print("Enter register id: ");
+        String regId = sc.nextLine();
+
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getRegister_id().equalsIgnoreCase(regId)) {
+                System.out.println("Error: Register ID already exists!");
+                return;
+            }
+        }
+
+        System.out.print("Enter student id: ");
+        String studentId = sc.nextLine();
+        
+        System.out.print("Enter student name: ");
+        String studentName = sc.nextLine();
+        
+        System.out.print("Enter club id: ");
+        String clubId = sc.nextLine();
+        
+        System.out.print("Enter join date: ");
+        String joinDate = sc.nextLine();
+        
+        System.out.print("Enter status: ");
+        String status = sc.nextLine();
+
+        Registration r = new Registration(regId, studentId, studentName, clubId, joinDate, status);
+        list.add(r);
+        System.out.println("Add registration successfully!");
+    }
+
+    public void DeleteRegister() {
+        System.out.println("\n--- DELETE REGISTRATION ---");
+        System.out.print("Enter register id to delete: ");
+        String regId = sc.nextLine();
+
+        boolean check = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getRegister_id().equalsIgnoreCase(regId)) {
+                list.remove(i);
+                check = true;
+                System.out.println("Delete successfully!");
+                break;
+            }
+        }
+        
+        if (check == false) {
+            System.out.println("Not found this register id!");
+        }
+    }
+
+    public void SearchMember() {
+        System.out.println("\n--- SEARCH MEMBER ---");
+        System.out.print("Enter student id or club id to search: ");
+        String keyword = sc.nextLine();
+
+        boolean check = false;
+        System.out.println("Result:");
+        for (int i = 0; i < list.size(); i++) {
+            Registration r = list.get(i);
+            // Dùng hàm contains đơn giản để tìm kiếm
+            if (r.getName_id().contains(keyword) || r.getClub_id().contains(keyword)) {
+                System.out.println(r.toString());
+                check = true;
+            }
+        }
+        
+        if (check == false) {
+            System.out.println("No matching member found!");
+        }
+    }
+
+    public void ListStudents() {
+        System.out.println("\n--- LIST STUDENTS BY CLUB ---");
+        System.out.print("Enter club id: ");
+        String clubId = sc.nextLine();
+
+        boolean check = false;
+        System.out.println("Students in club " + clubId + ":");
+        for (int i = 0; i < list.size(); i++) {
+            Registration r = list.get(i);
+            if (r.getClub_id().equalsIgnoreCase(clubId)) {
+                System.out.println("- " + r.getName_id() + " : " + r.getStudent_name());
+                check = true;
+            }
+        }
+        
+        if (check == false) {
+            System.out.println("No students found in this club!");
+        }
+    }
+
+    public void menu() {
+        int choice = 0;
+        do {
+            System.out.println("\n=== REGISTRATION MENU ===");
+            System.out.println("1. Add new registration");
+            System.out.println("2. Delete registration");
+            System.out.println("3. Search member");
+            System.out.println("4. List students by club");
+            System.out.println("0. Back to main menu");
+            System.out.print("Your choice: ");
+            
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (Exception e) {
+                choice = -1;
+            }
+
+            switch (choice) {
+                case 1:
+                    AddRegister();
+                    break;
+                case 2:
+                    DeleteRegister();
+                    break;
+                case 3:
+                    SearchMember();
+                    break;
+                case 4:
+                    ListStudents();
+                    break;
+                case 0:
+                    System.out.println("Returning...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please choose from 0 to 4.");
+            }
+        } while (choice != 0);
+    }
+}
