@@ -1,0 +1,245 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class ClubManagement{
+    private ArrayList<Club> clubs;
+    public ClubManagement(){
+        clubs = new ArrayList<Club>();
+    }
+
+    public void AddClub(Scanner sc){
+        String club_id;
+        String club_name;
+        String category;
+        String founded_date;
+        String leader_name;
+        int member_count;
+        String status;
+
+        System.out.print("Enter club ID: ");
+        club_id = sc.nextLine().trim();
+        if(club_id.isEmpty()){
+            System.out.println("Club ID cannot be empty.");
+            return;
+        }
+        if(SearchClubById(club_id) != null){
+            System.out.println("Club ID already exists.");
+            return;
+        }
+        
+        System.out.print("Enter club name: ");
+        club_name = sc.nextLine().trim();
+        if(club_name.isEmpty()){
+            System.out.println("Club name cannot be empty.");
+            return;
+        }
+        
+        System.out.print("Enter category: ");
+        category = sc.nextLine().trim();
+        if(category.isEmpty()){
+            System.out.println("Category cannot be empty.");
+            return;
+        }
+        
+        System.out.print("Enter founded date (dd/MM/yyyy): ");
+        founded_date = sc.nextLine().trim();
+        if(!isValidDate(founded_date)){
+            System.out.println("Invalid founded date.");
+            return;
+        }
+
+        System.out.print("Enter leader name: ");
+        leader_name = sc.nextLine().trim();
+        if(leader_name.isEmpty()){
+            System.out.println("Leader name cannot be empty.");
+            return;
+        }
+
+        System.out.print("Enter member count: ");
+        try{
+            member_count = Integer.parseInt(sc.nextLine());
+            if(member_count < 0){
+                System.out.println("Member count must be >= 0.");
+                return;
+            }
+        }catch(NumberFormatException e){
+            System.out.println("Invalid member count.");
+            return;
+        }
+
+        System.out.print("Enter status (Active/Inactive): ");
+        status = sc.nextLine().trim();
+        if(status.equalsIgnoreCase("Active")){
+            status = "Active";
+        }else if(status.equalsIgnoreCase("Inactive")){
+            status = "Inactive";
+        }else{
+            System.out.println("Invalid status.");
+            return;
+        }
+
+        Club club = new Club(club_id, club_name, category, founded_date, leader_name, member_count, status);
+        clubs.add(club);
+        System.out.println("Club added successfully.");
+    }
+
+    public Club SearchClubById(String club_id){
+        for(Club club : clubs){
+            if(club.getClubId().equalsIgnoreCase(club_id)){
+                return club;
+            }
+        }
+        return null;
+    }
+
+    public void SearchClubByName(Scanner sc){
+        System.out.print("Enter club name: ");
+        String name = sc.nextLine().trim();
+        boolean found = false;
+
+        for (Club club : clubs){
+            if(club.getClubName().toLowerCase().contains(name.toLowerCase())){
+                club.displayClub();
+                found = true;
+            }
+        }
+        if(!found){
+            System.out.println("Club not found.");
+        }
+    }
+
+    public void UpdateClub(Scanner sc){
+        System.out.print("Enter club ID to update: ");
+        String club_id = sc.nextLine().trim();
+        Club club = SearchClubById(club_id);
+        if(club == null){
+            System.out.println("Club not found.");
+            return;
+        }
+        
+        System.out.print("Enter new club name: ");
+        String club_name = sc.nextLine().trim();
+        if(club_name.isEmpty()){
+            System.out.println("Club name cannot be empty.");
+            return;
+        }
+
+        System.out.print("Enter new category: ");
+        String category = sc.nextLine().trim();
+        if (category.isEmpty()){
+            System.out.println("Category cannot be empty.");
+            return;
+        }
+
+        System.out.print("Enter new founded date (dd/MM/yyyy): ");
+        String founded_date = sc.nextLine().trim();
+        if(!isValidDate(founded_date)){
+            System.out.println("Invalid founded date.");
+            return;
+        }
+
+        System.out.print("Enter new leader name: ");
+        String leader_name = sc.nextLine().trim();
+        if(leader_name.isEmpty()){
+            System.out.println("Leader name cannot be empty.");
+            return;
+        }
+
+        System.out.print("Enter new member count: ");
+        int member_count;
+        try{
+            member_count = Integer.parseInt(sc.nextLine());
+            if(member_count < 0){
+                System.out.println("Member count must be >= 0.");
+                return;
+            }
+        }catch(NumberFormatException e){
+            System.out.println("Invalid member count.");
+            return;
+        }
+
+        System.out.print("Enter new status (Active/Inactive): ");
+        String status = sc.nextLine().trim();
+        if(status.equalsIgnoreCase("Active")) {
+            status = "Active";
+        }else if(status.equalsIgnoreCase("Inactive")){
+            status = "Inactive";
+        }else{
+            System.out.println("Invalid status.");
+            return;
+        }
+
+        club.setClubName(club_name);
+        club.setCategory(category);
+        club.setFoundedDate(founded_date);
+        club.setLeaderName(leader_name);
+        club.setMemberCount(member_count);
+        club.setStatus(status);
+        System.out.println("Club updated successfully.");
+    }
+
+    public void DeleteClub(Scanner sc){
+        System.out.print("Enter club ID to delete: ");
+        String club_id = sc.nextLine().trim();
+        Club club = SearchClubById(club_id);
+        if(club == null){
+            System.out.println("Club not found.");
+            return;
+        }
+        clubs.remove(club);
+        System.out.println("Club deleted successfully.");
+    }
+
+    public void FilterClubStatus(String status) {
+        if(!status.equalsIgnoreCase("Active") && !status.equalsIgnoreCase("Inactive")){
+            System.out.println("Invalid status.");
+            return;
+        }
+        boolean found = false;
+        for (Club club : clubs){
+            if(club.getStatus().equalsIgnoreCase(status)){
+                club.displayClub();
+                found = true;
+            }
+        }
+        if(!found){
+            System.out.println("No clubs found with this status.");
+        }
+    }
+
+    public void FilterClubCategory(String category){
+        boolean found = false;
+        for(Club club : clubs){
+            if(club.getCategory().equalsIgnoreCase(category)){
+                club.displayClub();
+                found = true;
+            }
+        }
+        if(!found){
+            System.out.println("No clubs found in this category.");
+        }
+    }
+
+    public void DisplayClubs(){
+        if(clubs.isEmpty()){
+            System.out.println("No clubs available.");
+            return;
+        }
+        for(Club club : clubs){
+            club.displayClub();
+        }
+    }
+
+    private boolean isValidDate(String date){
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        format.setLenient(false);
+        try{
+            format.parse(date);
+            return true;
+        }catch(ParseException e){
+            return false;
+        }
+    }
+}
