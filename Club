@@ -1,0 +1,85 @@
+public class Club{
+    private String clubId;
+    private String clubName;
+    private String category;
+    private String foundedDate;
+    private String leaderName;
+    private int memberCount;
+    private String status;
+
+    public Club(){
+    }
+
+    public Club(String clubId, String clubName, String category, String foundedDate, String leaderName, int memberCount, String status) {
+        this.clubId = clubId;
+        this.clubName = clubName;
+        this.category = category;
+        this.foundedDate = foundedDate;
+        this.leaderName = leaderName;
+        this.memberCount = memberCount;
+        this.status = status;
+    }
+
+    public String getClubId() {
+        return clubId;
+    }
+
+    public void setClubId(String clubId) {
+        this.clubId = clubId;
+    }
+
+    public String getClubName() {
+        return clubName;
+    }
+
+    public void setClubName(String clubName) {
+        this.clubName = clubName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getFoundedDate() {
+        return foundedDate;
+    }
+
+    public void setFoundedDate(String foundedDate) {
+        this.foundedDate = foundedDate;
+    }
+
+    public String getLeaderName() {
+        return leaderName;
+    }
+
+    public void setLeaderName(String leaderName) {
+        this.leaderName = leaderName;
+    }
+
+    public int getMemberCount() {
+        return memberCount;
+    }
+
+    public void setMemberCount(int memberCount) {
+        this.memberCount = memberCount;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    
+
+    public void displayClub() {
+        System.out.printf("|%-6s|%-20s|%-10s|%-10s|%-20s|%-5d|%-10s%n",
+                clubId, clubName, category, foundedDate, leaderName, memberCount, status);
+    }
+}
