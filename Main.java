@@ -1,3 +1,5 @@
+
+import java.io.File;
 import java.util.Scanner;
 import business.RegistrationManagement;
 
@@ -7,6 +9,8 @@ public class Main {
         System.out.println("\n========== CLUB MANAGEMENT SYSTEM ==========");
         System.out.println("1. Club Management");
         System.out.println("2. Registration Management");
+        System.out.println("3. Save data to files");
+        System.out.println("4. Load data from files");
         System.out.println("0. Exit");
         System.out.println("============================================");
     }
@@ -27,13 +31,11 @@ public class Main {
 
     public static void clubMenu(Scanner sc, ClubManagement clubManagement) {
         int choice;
-
         do {
             showClubMenu();
             System.out.print("Enter your choice: ");
-
             try {
-                choice = Integer.parseInt(sc.nextLine());
+                choice = Integer.parseInt(sc.nextLine().trim());
             } catch (NumberFormatException e) {
                 choice = -1;
             }
@@ -42,72 +44,82 @@ public class Main {
                 case 1:
                     clubManagement.AddClub(sc);
                     break;
-
                 case 2:
                     clubManagement.DisplayClubs();
                     break;
-
                 case 3:
                     System.out.print("Enter club ID: ");
-                    String id = sc.nextLine().trim();
-                    Club club = clubManagement.SearchClubById(id);
-
+                    Club club = clubManagement.SearchClubById(sc.nextLine().trim());
                     if (club != null) {
                         club.displayClub();
                     } else {
                         System.out.println("Club not found.");
                     }
                     break;
-
                 case 4:
                     clubManagement.SearchClubByName(sc);
                     break;
-
                 case 5:
                     clubManagement.UpdateClub(sc);
                     break;
-
                 case 6:
                     clubManagement.DeleteClub(sc);
                     break;
-
                 case 7:
                     System.out.print("Enter status (Active/Inactive): ");
-                    String status = sc.nextLine().trim();
-                    clubManagement.FilterClubStatus(status);
+                    clubManagement.FilterClubStatus(sc.nextLine().trim());
                     break;
-
                 case 8:
                     System.out.print("Enter category: ");
-                    String category = sc.nextLine().trim();
-                    clubManagement.FilterClubCategory(category);
+                    clubManagement.FilterClubCategory(sc.nextLine().trim());
                     break;
-
                 case 0:
                     System.out.println("Back to main menu.");
                     break;
-
                 default:
                     System.out.println("Invalid choice!");
             }
-
         } while (choice != 0);
+    }
+
+    // Lab 6: Save data to text files
+    public static void saveData(ClubManagement clubs,
+                                RegistrationManagement registrations) {
+        FileHandler.SaveClub(clubs.getClubs());
+        FileHandler.SaveRegistration(registrations.getRegistrations());
+    }
+
+    // Lab 6: Load data from text files
+    public static void loadData(ClubManagement clubs,
+                                RegistrationManagement registrations) {
+        if (new File("clubs.txt").exists()) {
+            clubs.setClubs(FileHandler.LoadClub());
+        } else {
+            System.out.println("clubs.txt not found. Keeping current clubs.");
+        }
+
+        if (new File("registrations.txt").exists()) {
+            registrations.setRegistrations(FileHandler.LoadRegistration());
+        } else {
+            System.out.println("registrations.txt not found. Keeping current registrations.");
+        }
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
         ClubManagement clubManagement = new ClubManagement();
-        RegistrationManagement registrationManagement = new RegistrationManagement();
+        RegistrationManagement registrationManagement =
+                new RegistrationManagement(sc);
+
+        // Automatically load data when starting
+        loadData(clubManagement, registrationManagement);
 
         int choice;
-
         do {
             showMainMenu();
             System.out.print("Enter your choice: ");
-
             try {
-                choice = Integer.parseInt(sc.nextLine());
+                choice = Integer.parseInt(sc.nextLine().trim());
             } catch (NumberFormatException e) {
                 choice = -1;
             }
@@ -115,21 +127,30 @@ public class Main {
             switch (choice) {
                 case 1:
                     clubMenu(sc, clubManagement);
+                    saveData(clubManagement, registrationManagement);
                     break;
 
                 case 2:
                     registrationManagement.menu();
+                    saveData(clubManagement, registrationManagement);
+                    break;
+
+                case 3:
+                    saveData(clubManagement, registrationManagement);
+                    break;
+
+                case 4:
+                    loadData(clubManagement, registrationManagement);
                     break;
 
                 case 0:
+                    saveData(clubManagement, registrationManagement);
                     System.out.println("Program ended.");
                     break;
 
                 default:
                     System.out.println("Invalid choice!");
             }
-
         } while (choice != 0);
     }
 }
-
