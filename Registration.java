@@ -1,4 +1,6 @@
+
 package models;
+
 public class Registration {
     private String register_id;
     private String name_id;
@@ -22,7 +24,6 @@ public class Registration {
     public String getRegister_id() {
         return register_id;
     }
-
     public void setRegister_id(String register_id) {
         this.register_id = register_id;
     }
@@ -30,7 +31,6 @@ public class Registration {
     public String getName_id() {
         return name_id;
     }
-
     public void setName_id(String name_id) {
         this.name_id = name_id;
     }
@@ -38,7 +38,6 @@ public class Registration {
     public String getStudent_name() {
         return student_name;
     }
-
     public void setStudent_name(String student_name) {
         this.student_name = student_name;
     }
@@ -46,7 +45,6 @@ public class Registration {
     public String getClub_id() {
         return club_id;
     }
-
     public void setClub_id(String club_id) {
         this.club_id = club_id;
     }
@@ -54,7 +52,6 @@ public class Registration {
     public String getJoin_date() {
         return join_date;
     }
-
     public void setJoin_date(String join_date) {
         this.join_date = join_date;
     }
@@ -62,11 +59,10 @@ public class Registration {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     @Override
     public String toString() {
         return "Register ID: " + register_id + ", Student ID: " + name_id + ", Name: " + student_name + ", Club ID: " + club_id + ", Date: " + join_date + ", Status: " + status;
