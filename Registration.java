@@ -1,70 +1,89 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package model;
 
-package models;
-
-public class Registration {
-    private String register_id;
-    private String name_id;
-    private String student_name;
-    private String club_id;
-    private String join_date;
-    private String status;
+/**
+ *
+ * @author ADMIN
+ */
+public class Registration extends Model {
+    private String registerId;
+    private String studentId;
+    private String studentName;
+    private String clubId;
+    private String joinDate;
 
     public Registration() {
     }
 
-    public Registration(String register_id, String name_id, String student_name, String club_id, String join_date, String status) {
-        this.register_id = register_id;
-        this.name_id = name_id;
-        this.student_name = student_name;
-        this.club_id = club_id;
-        this.join_date = join_date;
-        this.status = status;
+    public Registration(String registerId, String studentId, String studentName, String clubId, String joinDate, String status) {
+        super(status);
+        this.registerId = registerId;
+        this.studentId = studentId;
+        this.studentName = studentName;
+        this.clubId = clubId;
+        this.joinDate = joinDate;
     }
 
-    public String getRegister_id() {
-        return register_id;
-    }
-    public void setRegister_id(String register_id) {
-        this.register_id = register_id;
+    public String getRegisterId() {
+        return registerId;
     }
 
-    public String getName_id() {
-        return name_id;
-    }
-    public void setName_id(String name_id) {
-        this.name_id = name_id;
+    public void setRegisterId(String registerId) {
+        this.registerId = registerId;
     }
 
-    public String getStudent_name() {
-        return student_name;
-    }
-    public void setStudent_name(String student_name) {
-        this.student_name = student_name;
+    public String getStudentId() {
+        return studentId;
     }
 
-    public String getClub_id() {
-        return club_id;
-    }
-    public void setClub_id(String club_id) {
-        this.club_id = club_id;
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 
-    public String getJoin_date() {
-        return join_date;
-    }
-    public void setJoin_date(String join_date) {
-        this.join_date = join_date;
+    public String getStudentName() {
+        return studentName;
     }
 
-    public String getStatus() {
-        return status;
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
-    public void setStatus(String status) {
-        this.status = status;
+
+    public String getClubId() {
+        return clubId;
+    }
+
+    public void setClubId(String clubId) {
+        this.clubId = clubId;
+    }
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    
+
+    public static void PrintHeader() {
+        System.out.println("==================================================================================================");
+        System.out.printf("|%-10s|%-10s|%-20s|%-8s|%-12s|%-8s|%n", "Register", "Student", "Name", "Club", "Join date", "Status");
+        System.out.println("==================================================================================================");
     }
 
     @Override
-    public String toString() {
-        return "Register ID: " + register_id + ", Student ID: " + name_id + ", Name: " + student_name + ", Club ID: " + club_id + ", Date: " + join_date + ", Status: " + status;
+    public void display() {
+        System.out.printf("|%-10s|%-10s|%-20s|%-8s|%-12s|%-8s|%n", 
+                registerId, studentId, studentName, clubId, joinDate, getStatus());
     }
+
+    @Override
+    public String toFileString() {
+        return registerId + "|" + studentId + "|" + studentName + "|" + clubId + "|" + joinDate + "|" + getStatus();
+    }
+    
 }

@@ -1,264 +1,181 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package control;
 
-package business;
-
-import models.Registration;
 import java.util.ArrayList;
 import java.util.Scanner;
+import model.Club;
+import model.Registration;
+import static utils.Utils.InputClubId;
+import static utils.Utils.InputDate;
+import static utils.Utils.InputRegisterId;
+import static utils.Utils.InputStatus;
+import static utils.Utils.InputStudentId;
+import static utils.Utils.InputText;
 
+
+/**
+ *
+ * @author ADMIN
+ */
 public class RegistrationManagement {
-    private ArrayList<Registration> list = new ArrayList<Registration>();
-    private ArrayList<String> clubIds = new ArrayList<String>();
-    private final Scanner sc;
+    private ArrayList<Registration> registrations;
+    private Scanner sc;
+    private ClubManagement clubManagement;
 
-    public RegistrationManagement(Scanner scanner) {
-        this.sc = scanner;
-        list.add(new Registration("K001", "SE01", "Nguyen Van An",
-                "C001", "10/09/2024", "Active"));
-        list.add(new Registration("K002", "SE02", "Tran Thi Binh",
-                "C001", "11/09/2024", "Active"));
+    public RegistrationManagement(Scanner sc, ClubManagement clubManagement){
+        this.sc = sc;
+        this.clubManagement = clubManagement;
+        this.registrations = new ArrayList<Registration>();
     }
 
-    public RegistrationManagement() {
-        this(new Scanner(System.in));
+    public ArrayList<Registration> getRegistrations(){
+        return registrations;
     }
 
-    public ArrayList<Registration> getRegistrations() {
-        return list;
-    }
-
-    public void setRegistrations(ArrayList<Registration> loadedRegistrations) {
-        if (loadedRegistrations != null) {
-            list = loadedRegistrations;
+    public void setRegistrations(ArrayList<Registration> loadedRegistrations){
+        if(loadedRegistrations != null){
+            registrations = loadedRegistrations;
         }
     }
 
-    public void setClubIds(ArrayList<String> ids) {
-        clubIds = ids;
-    }
-
-    private boolean clubExists(String clubId) {
-        for (String id : clubIds) {
-            if (id.equalsIgnoreCase(clubId)) {
-                return true;
+    public Registration FindRegisterById(String registerId){
+        for (Registration r : registrations){
+            if(r.getRegisterId().equalsIgnoreCase(registerId)){
+                return r;
             }
         }
-        return false;
+        return null;
     }
 
-    private boolean isValidDate(String date) {
-        if (date.length() != 10) {
-            return false;
-        }
-        if (date.charAt(2) != '/' || date.charAt(5) != '/') {
-            return false;
-        }
-        for (int i = 0; i < date.length(); i++) {
-            if (i != 2 && i != 5) {
-                if (date.charAt(i) < '0' || date.charAt(i) > '9') {
-                    return false;
-                }
-            }
-        }
-        int day = Integer.parseInt(date.substring(0, 2));
-        int month = Integer.parseInt(date.substring(3, 5));
-        int year = Integer.parseInt(date.substring(6, 10));
-        if (year < 1 || month < 1 || month > 12) {
-            return false;
-        }
-        int maxDay = 31;
-        if (month == 4 || month == 6 || month == 9 || month == 11) {
-            maxDay = 30;
-        }
-        if (month == 2) {
-            maxDay = 28;
-            if (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) {
-                maxDay = 29;
-            }
-        }
-        if (day < 1 || day > maxDay) {
-            return false;
-        }
-        return true;
-    }
-
-    public void AddRegister() {
+    public void AddRegister(){
         System.out.println("\n--- ADD NEW REGISTRATION ---");
-        System.out.print("Enter register id: ");
-        String regId = sc.nextLine().trim();
-        if (regId.isEmpty() || regId.contains("|")) {
-            System.out.println("Invalid register ID!");
+        String registerId = InputRegisterId(sc);
+        if(FindRegisterById(registerId) != null){
+            System.out.println("Error: Register ID already exists!");
             return;
         }
-        for (Registration r : list) {
-            if (r.getRegister_id().equalsIgnoreCase(regId)) {
-                System.out.println("Error: Register ID already exists!");
-                return;
-            }
-        }
-
-        System.out.print("Enter student id: ");
-        String studentId = sc.nextLine().trim();
-        if (studentId.isEmpty() || studentId.contains("|")) {
-            System.out.println("Invalid student ID!");
+        String studentId = InputStudentId(sc);
+        String studentName = InputText(sc, "Enter student name: ");
+        if(IsStudentNameConflict(studentId, studentName)){
             return;
         }
-
-        System.out.print("Enter student name: ");
-        String studentName = sc.nextLine().trim();
-        if (studentName.isEmpty() || studentName.contains("|")) {
-            System.out.println("Invalid student name!");
+        String clubId = InputClubId(sc);
+        Club club = clubManagement.FindClubById(clubId);
+        if(club == null){
+            System.out.println("Error: Club does not exist!");
             return;
         }
-
-        System.out.print("Enter club id: ");
-        String clubId = sc.nextLine().trim();
-        if (clubId.isEmpty() || clubId.contains("|")) {
-            System.out.println("Invalid club ID!");
+        if(!club.getStatus().equalsIgnoreCase("Active")){
+            System.out.println("Error: This club is Inactive, cannot register!");
             return;
         }
-        if (!clubExists(clubId)) {
-            System.out.println("Club ID does not exist!");
+        if(IsActiveMember(studentId, clubId)){
+            System.out.println("Error: This student is already an active member of this club!");
             return;
         }
-        for (Registration r : list) {
-            if (r.getName_id().equalsIgnoreCase(studentId) &&
-                    r.getClub_id().equalsIgnoreCase(clubId)) {
-                System.out.println("Student already registered in this club!");
-                return;
-            }
-        }
-
-        System.out.print("Enter join date (dd/MM/yyyy): ");
-        String joinDate = sc.nextLine().trim();
-        if (!isValidDate(joinDate)) {
-            System.out.println("Invalid join date!");
-            return;
-        }
-
-        System.out.print("Enter status (Active/Inactive): ");
-        String status = sc.nextLine().trim();
-        if (status.equalsIgnoreCase("Active")) {
-            status = "Active";
-        } else if (status.equalsIgnoreCase("Inactive")) {
-            status = "Inactive";
-        } else {
-            System.out.println("Invalid status!");
-            return;
-        }
-
-        Registration r = new Registration(regId, studentId, studentName,
-                clubId, joinDate, status);
-        list.add(r);
+        String joinDate = InputDate(sc, "Enter join date (dd/MM/yyyy): ");
+        String status = InputStatus(sc, "Enter status (Active/Left): ", "Active", "Left");
+        registrations.add(new Registration(registerId, studentId, studentName, club.getClubId(), joinDate, status));
+        UpdateMemberCount();
         System.out.println("Add registration successfully!");
     }
 
     public void DeleteRegister() {
         System.out.println("\n--- DELETE REGISTRATION ---");
-        System.out.print("Enter register id to delete: ");
-        String regId = sc.nextLine().trim();
-        if (regId.isEmpty()) {
-            System.out.println("Register ID cannot be empty!");
+        String registerId = InputText(sc, "Enter register ID to delete: ");
+        Registration r = FindRegisterById(registerId);
+        if(r == null){
+            System.out.println("Register ID not found!");
             return;
         }
-
-        boolean found = false;
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getRegister_id().equalsIgnoreCase(regId)) {
-                list.remove(i);
-                found = true;
-                System.out.println("Delete successfully!");
-                break;
-            }
-        }
-        if (!found) {
-            System.out.println("Not found this register id!");
-        }
+        registrations.remove(r);
+        UpdateMemberCount();
+        System.out.println("Delete registration successfully!");
     }
 
-    public void SearchMember() {
+    public void SearchMember(){
         System.out.println("\n--- SEARCH MEMBER ---");
-        System.out.print("Enter student id or club id to search: ");
-        String keyword = sc.nextLine().trim();
-        if (keyword.isEmpty()) {
-            System.out.println("Search keyword cannot be empty!");
-            return;
-        }
-
-        boolean found = false;
-        System.out.println("Result:");
-        for (Registration r : list) {
-            if (r.getName_id().toLowerCase().contains(keyword.toLowerCase()) ||
-                    r.getClub_id().toLowerCase().contains(keyword.toLowerCase())) {
-                System.out.println(r.toString());
-                found = true;
+        String keyword = InputText(sc, "Enter student ID or club ID: ");
+        ArrayList<Registration> result = new ArrayList<Registration>();
+        for (Registration r : registrations) {
+            if (r.getStudentId().equalsIgnoreCase(keyword) || r.getClubId().equalsIgnoreCase(keyword)) {
+                result.add(r);
             }
         }
-        if (!found) {
-            System.out.println("No matching member found!");
+        PrintRegistrationList(result, "No matching member found!");
+    }
+    
+    public void DeleteRegistrationsByClubId(String clubId){
+    for (int i = registrations.size() - 1; i >= 0; i--){
+        Registration registration = registrations.get(i);
+        if(registration.getClubId().equalsIgnoreCase(clubId)){
+            registrations.remove(i);
         }
+    } UpdateMemberCount();
     }
 
-    public void ListStudents() {
+    public void ListStudents(){
         System.out.println("\n--- LIST STUDENTS BY CLUB ---");
-        System.out.print("Enter club id: ");
-        String clubId = sc.nextLine().trim();
-        if (clubId.isEmpty()) {
-            System.out.println("Club ID cannot be empty!");
+        String clubId = InputText(sc, "Enter club ID: ");
+        Club club = clubManagement.FindClubById(clubId);
+        if(club == null){
+            System.out.println("Club not found!");
             return;
         }
-        if (!clubExists(clubId)) {
-            System.out.println("Club ID does not exist!");
-            return;
-        }
-
-        boolean found = false;
-        System.out.println("Students in club " + clubId + ":");
-        for (Registration r : list) {
-            if (r.getClub_id().equalsIgnoreCase(clubId)) {
-                System.out.println("- " + r.getName_id() + " : "
-                        + r.getStudent_name());
-                found = true;
+        System.out.println("Students of club " + club.getClubId() + " - " + club.getClubName() + ":");
+        ArrayList<Registration> result = new ArrayList<Registration>();
+        for (Registration r : registrations){
+            if(r.getClubId().equalsIgnoreCase(club.getClubId())){
+                result.add(r);
             }
         }
-        if (!found) {
-            System.out.println("No students found in this club!");
+        PrintRegistrationList(result, "No students found in this club!");
+    }
+
+    public void UpdateMemberCount(){
+        for (Club club : clubManagement.getClubs()){
+            club.setMemberCount(0);
+        }
+        for (Registration r : registrations) {
+            if(r.getStatus().equalsIgnoreCase("Active")) {
+                Club club = clubManagement.FindClubById(r.getClubId());
+                if(club != null) {
+                    club.setMemberCount(club.getMemberCount() + 1);
+                }
+            }
         }
     }
 
-    public void menu() {
-        int choice;
-        do {
-            System.out.println("\n=== REGISTRATION MENU ===");
-            System.out.println("1. Add new registration");
-            System.out.println("2. Delete registration");
-            System.out.println("3. Search member");
-            System.out.println("4. List students by club");
-            System.out.println("0. Back to main menu");
-            System.out.print("Your choice: ");
-            try {
-                choice = Integer.parseInt(sc.nextLine().trim());
-            } catch (NumberFormatException e) {
-                choice = -1;
+    private boolean IsActiveMember(String studentId, String clubId) {
+        for (Registration r : registrations) {
+            if(r.getStudentId().equalsIgnoreCase(studentId) && r.getClubId().equalsIgnoreCase(clubId) 
+                    && r.getStatus().equalsIgnoreCase("Active")) {
+                return true;
             }
-            switch (choice) {
-                case 1:
-                    AddRegister();
-                    break;
-                case 2:
-                    DeleteRegister();
-                    break;
-                case 3:
-                    SearchMember();
-                    break;
-                case 4:
-                    ListStudents();
-                    break;
-                case 0:
-                    System.out.println("Returning...");
-                    break;
-                default:
-                    System.out.println("Invalid choice! Please choose from 0 to 4.");
+        }return false;
+    }
+
+    private boolean IsStudentNameConflict(String studentId, String studentName) {
+        for (Registration r : registrations) {
+            if (r.getStudentId().equalsIgnoreCase(studentId) && !r.getStudentName().equalsIgnoreCase(studentName)) {
+                System.out.println("Error: Student ID " + studentId + " already belongs to \"" + r.getStudentName() + "\"!");
+                return true;
             }
-        } while (choice != 0);
+        }return false;
+    }
+
+    private void PrintRegistrationList(ArrayList<Registration> list, String emptyMessage) {
+        if(list.isEmpty()){
+            System.out.println(emptyMessage);
+            return;
+        }
+        Registration.PrintHeader();
+        for (Registration r : list) {
+            r.display();
+        }
+        System.out.println("Total: " + list.size() + " registration(s).");
     }
 }
