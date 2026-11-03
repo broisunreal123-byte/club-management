@@ -1,11 +1,22 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package view;
 
+import control.ClubManagement;
+import control.RegistrationManagement;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Scanner;
-import business.RegistrationManagement;
+import utils.FileIO;
+import static utils.Utils.InputChoice;
 
+/**
+ *
+ * @author ADMIN
+ */
 public class Main {
-    public static void showMainMenu() {
+    public static void ShowMainMenu() {
         System.out.println("\n========== CLUB MANAGEMENT SYSTEM ==========");
         System.out.println("1. Club Management");
         System.out.println("2. Registration Management");
@@ -15,7 +26,7 @@ public class Main {
         System.out.println("============================================");
     }
 
-    public static void showClubMenu() {
+    public static void ShowClubMenu() {
         System.out.println("\n========== CLUB MENU ==========");
         System.out.println("1. Add club");
         System.out.println("2. Display all clubs");
@@ -29,126 +40,131 @@ public class Main {
         System.out.println("===============================");
     }
 
-    public static void clubMenu(Scanner sc, ClubManagement clubManagement) {
+    public static void ShowRegistrationMenu() {
+        System.out.println("\n========== REGISTRATION MENU ==========");
+        System.out.println("1. Add new registration");
+        System.out.println("2. Delete registration");
+        System.out.println("3. Search member by student ID or club ID");
+        System.out.println("4. List students of a club");
+        System.out.println("5. Show clubs with the most members");
+        System.out.println("0. Back to main menu");
+        System.out.println("=======================================");
+    }
+
+    public static void ClubMenu(Scanner sc, ClubManagement clubManagement) {
         int choice;
-        do {
-            showClubMenu();
-            System.out.print("Enter your choice: ");
-            try {
-                choice = Integer.parseInt(sc.nextLine().trim());
-            } catch (NumberFormatException e) {
-                choice = -1;
-            }
+        do{
+            ShowClubMenu();
+            choice = InputChoice(sc, "Enter your choice: ");
             switch (choice) {
                 case 1:
-                    clubManagement.AddClub(sc);
+                    clubManagement.AddClub();
                     break;
                 case 2:
                     clubManagement.DisplayClubs();
                     break;
                 case 3:
-                    System.out.print("Enter club ID: ");
-                    String clubId = sc.nextLine().trim();
-                    if (clubId.isEmpty()) {
-                        System.out.println("Club ID cannot be empty.");
-                    } else {
-                        Club club = clubManagement.SearchClubById(clubId);
-                        if (club != null) {
-                            club.displayClub();
-                        } else {
-                            System.out.println("Club not found.");
-                        }
-                    }
+                    clubManagement.SearchClubById();
                     break;
                 case 4:
-                    clubManagement.SearchClubByName(sc);
+                    clubManagement.SearchClubByName();
                     break;
                 case 5:
-                    clubManagement.UpdateClub(sc);
+                    clubManagement.UpdateClub();
                     break;
                 case 6:
-                    clubManagement.DeleteClub(sc);
+                    clubManagement.DeleteClub();
                     break;
                 case 7:
-                    System.out.print("Enter status (Active/Inactive): ");
-                    clubManagement.FilterClubStatus(sc.nextLine().trim());
+                    clubManagement.FilterClubStatus();
                     break;
                 case 8:
-                    System.out.print("Enter category: ");
-                    clubManagement.FilterClubCategory(sc.nextLine().trim());
+                    clubManagement.FilterClubCategory();
                     break;
                 case 0:
                     System.out.println("Back to main menu.");
                     break;
                 default:
-                    System.out.println("Invalid choice!");
+                    System.out.println("Invalid choice! Please choose from 0 to 8.");
             }
-        } while (choice != 0);
+        }while(choice != 0);
     }
 
-    public static void saveData(ClubManagement clubs,
-            RegistrationManagement registrations) {
-        FileHandler.SaveClub(clubs.getClubs());
-        FileHandler.SaveRegistration(registrations.getRegistrations());
-    }
-
-    public static void loadData(ClubManagement clubs,
-            RegistrationManagement registrations) {
-        if (new File("clubs.txt").exists()) {
-            clubs.setClubs(FileHandler.LoadClub());
-        } else {
-            System.out.println("clubs.txt not found. Keeping current clubs.");
-        }
-        if (new File("registrations.txt").exists()) {
-            registrations.setRegistrations(FileHandler.LoadRegistration());
-        } else {
-            System.out.println("registrations.txt not found. Keeping current registrations.");
-        }
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        ClubManagement clubManagement = new ClubManagement();
-        RegistrationManagement registrationManagement =
-                new RegistrationManagement(sc);
-        loadData(clubManagement, registrationManagement);
-
+    public static void RegistrationMenu(Scanner sc, RegistrationManagement registrationManagement) {
         int choice;
-        do {
-            showMainMenu();
-            System.out.print("Enter your choice: ");
-            try {
-                choice = Integer.parseInt(sc.nextLine().trim());
-            } catch (NumberFormatException e) {
-                choice = -1;
-            }
-            switch (choice) {
+        do{
+            ShowRegistrationMenu();
+            choice = InputChoice(sc, "Enter your choice: ");
+            switch(choice){
                 case 1:
-                    clubMenu(sc, clubManagement);
-                    saveData(clubManagement, registrationManagement);
+                    registrationManagement.AddRegister();
                     break;
                 case 2:
-                    ArrayList<String> clubIds = new ArrayList<String>();
-                    for (Club club : clubManagement.getClubs()) {
-                        clubIds.add(club.getClubId());
-                    }
-                    registrationManagement.setClubIds(clubIds);
-                    registrationManagement.menu();
-                    saveData(clubManagement, registrationManagement);
+                    registrationManagement.DeleteRegister();
                     break;
                 case 3:
-                    saveData(clubManagement, registrationManagement);
+                    registrationManagement.SearchMember();
                     break;
                 case 4:
-                    loadData(clubManagement, registrationManagement);
+                    registrationManagement.ListStudents();
                     break;
                 case 0:
-                    saveData(clubManagement, registrationManagement);
+                    System.out.println("Back to main menu.");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please choose from 0 to 5.");
+            }
+        }while(choice != 0);
+    }
+
+    public static void SaveData(ClubManagement clubManagement, RegistrationManagement registrationManagement) {
+        FileIO.saveClub(clubManagement.getClubs());
+        FileIO.saveRegistration(registrationManagement.getRegistrations());
+    }
+
+    public static void LoadData(ClubManagement clubManagement, RegistrationManagement registrationManagement) {
+        if(new File(FileIO.CLUB_FILE).exists()){
+            clubManagement.setClubs(FileIO.loadClub());
+        }else{
+            System.out.println(FileIO.CLUB_FILE + " not found. Keeping current clubs.");
+        }
+        if(new File(FileIO.REGISTRATION_FILE).exists()){
+            registrationManagement.setRegistrations(FileIO.loadRegistration());
+        }else{
+            System.out.println(FileIO.REGISTRATION_FILE + " not found. Keeping current registrations.");
+        }
+        registrationManagement.UpdateMemberCount();
+    }
+
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        ClubManagement clubManagement = new ClubManagement(sc);
+        RegistrationManagement registrationManagement = new RegistrationManagement(sc, clubManagement);
+        LoadData(clubManagement, registrationManagement);
+        int choice;
+        do{
+            ShowMainMenu();
+            choice = InputChoice(sc, "Enter your choice: ");
+            switch (choice) {
+                case 1:
+                    ClubMenu(sc, clubManagement);
+                    break;
+                case 2:
+                    RegistrationMenu(sc, registrationManagement);
+                    break;
+                case 3:
+                    SaveData(clubManagement, registrationManagement);
+                    break;
+                case 4:
+                    LoadData(clubManagement, registrationManagement);
+                    break;
+                case 0:
+                    SaveData(clubManagement, registrationManagement);
                     System.out.println("Program ended.");
                     break;
                 default:
-                    System.out.println("Invalid choice!");
+                    System.out.println("Invalid choice! Please choose from 0 to 4.");
             }
-        } while (choice != 0);
+        }while(choice != 0);
     }
 }
