@@ -1,10 +1,10 @@
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Scanner;
 import business.RegistrationManagement;
 
 public class Main {
-
     public static void showMainMenu() {
         System.out.println("\n========== CLUB MANAGEMENT SYSTEM ==========");
         System.out.println("1. Club Management");
@@ -39,7 +39,6 @@ public class Main {
             } catch (NumberFormatException e) {
                 choice = -1;
             }
-
             switch (choice) {
                 case 1:
                     clubManagement.AddClub(sc);
@@ -49,11 +48,16 @@ public class Main {
                     break;
                 case 3:
                     System.out.print("Enter club ID: ");
-                    Club club = clubManagement.SearchClubById(sc.nextLine().trim());
-                    if (club != null) {
-                        club.displayClub();
+                    String clubId = sc.nextLine().trim();
+                    if (clubId.isEmpty()) {
+                        System.out.println("Club ID cannot be empty.");
                     } else {
-                        System.out.println("Club not found.");
+                        Club club = clubManagement.SearchClubById(clubId);
+                        if (club != null) {
+                            club.displayClub();
+                        } else {
+                            System.out.println("Club not found.");
+                        }
                     }
                     break;
                 case 4:
@@ -82,22 +86,19 @@ public class Main {
         } while (choice != 0);
     }
 
-    // Lab 6: Save data to text files
     public static void saveData(ClubManagement clubs,
-                                RegistrationManagement registrations) {
+            RegistrationManagement registrations) {
         FileHandler.SaveClub(clubs.getClubs());
         FileHandler.SaveRegistration(registrations.getRegistrations());
     }
 
-    // Lab 6: Load data from text files
     public static void loadData(ClubManagement clubs,
-                                RegistrationManagement registrations) {
+            RegistrationManagement registrations) {
         if (new File("clubs.txt").exists()) {
             clubs.setClubs(FileHandler.LoadClub());
         } else {
             System.out.println("clubs.txt not found. Keeping current clubs.");
         }
-
         if (new File("registrations.txt").exists()) {
             registrations.setRegistrations(FileHandler.LoadRegistration());
         } else {
@@ -110,8 +111,6 @@ public class Main {
         ClubManagement clubManagement = new ClubManagement();
         RegistrationManagement registrationManagement =
                 new RegistrationManagement(sc);
-
-        // Automatically load data when starting
         loadData(clubManagement, registrationManagement);
 
         int choice;
@@ -123,31 +122,30 @@ public class Main {
             } catch (NumberFormatException e) {
                 choice = -1;
             }
-
             switch (choice) {
                 case 1:
                     clubMenu(sc, clubManagement);
                     saveData(clubManagement, registrationManagement);
                     break;
-
                 case 2:
+                    ArrayList<String> clubIds = new ArrayList<String>();
+                    for (Club club : clubManagement.getClubs()) {
+                        clubIds.add(club.getClubId());
+                    }
+                    registrationManagement.setClubIds(clubIds);
                     registrationManagement.menu();
                     saveData(clubManagement, registrationManagement);
                     break;
-
                 case 3:
                     saveData(clubManagement, registrationManagement);
                     break;
-
                 case 4:
                     loadData(clubManagement, registrationManagement);
                     break;
-
                 case 0:
                     saveData(clubManagement, registrationManagement);
                     System.out.println("Program ended.");
                     break;
-
                 default:
                     System.out.println("Invalid choice!");
             }
