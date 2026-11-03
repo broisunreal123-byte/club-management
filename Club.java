@@ -1,4 +1,5 @@
-public class Club{
+
+public class Club {
     private String clubId;
     private String clubName;
     private String category;
@@ -7,7 +8,7 @@ public class Club{
     private int memberCount;
     private String status;
 
-    public Club(){
+    public Club() {
     }
 
     public Club(String clubId, String clubName, String category, String foundedDate, String leaderName, int memberCount, String status) {
@@ -23,7 +24,6 @@ public class Club{
     public String getClubId() {
         return clubId;
     }
-
     public void setClubId(String clubId) {
         this.clubId = clubId;
     }
@@ -31,7 +31,6 @@ public class Club{
     public String getClubName() {
         return clubName;
     }
-
     public void setClubName(String clubName) {
         this.clubName = clubName;
     }
@@ -39,7 +38,6 @@ public class Club{
     public String getCategory() {
         return category;
     }
-
     public void setCategory(String category) {
         this.category = category;
     }
@@ -47,7 +45,6 @@ public class Club{
     public String getFoundedDate() {
         return foundedDate;
     }
-
     public void setFoundedDate(String foundedDate) {
         this.foundedDate = foundedDate;
     }
@@ -55,7 +52,6 @@ public class Club{
     public String getLeaderName() {
         return leaderName;
     }
-
     public void setLeaderName(String leaderName) {
         this.leaderName = leaderName;
     }
@@ -63,7 +59,6 @@ public class Club{
     public int getMemberCount() {
         return memberCount;
     }
-
     public void setMemberCount(int memberCount) {
         this.memberCount = memberCount;
     }
@@ -71,12 +66,9 @@ public class Club{
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
-
-    
 
     public void displayClub() {
         System.out.printf("|%-6s|%-20s|%-10s|%-10s|%-20s|%-5d|%-10s%n",
